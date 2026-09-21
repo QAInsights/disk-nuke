@@ -33,6 +33,29 @@ The app is at `build/Build/Products/Debug/DiskNuke.app`. Or open `DiskNuke.xcode
 
 The project is configured for ad-hoc signing (`CODE_SIGN_IDENTITY="-"`, no development team) and has no App Sandbox entitlement — it needs broad filesystem access to do its job.
 
+## Install
+
+Build a Release binary and copy it to Applications:
+
+```sh
+xcodebuild -project DiskNuke.xcodeproj -scheme DiskNuke -configuration Release -derivedDataPath build build CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO
+cp -R build/Build/Products/Release/DiskNuke.app /Applications/
+```
+
+Or download `DiskNuke.zip` from the [Releases](../../releases) page. The app is not notarized, so on first launch right-click `DiskNuke.app` and choose **Open**, or clear the quarantine flag:
+
+```sh
+xattr -dr com.apple.quarantine /Applications/DiskNuke.app
+```
+
+## CI / Releases
+
+`.github/workflows/build.yml` builds a Release `DiskNuke.app` on every push and pull request (uploaded as a workflow artifact) and publishes `DiskNuke.zip` plus a SHA-256 checksum to a GitHub Release when a `v*` tag is pushed:
+
+```sh
+git tag v1.0.0 && git push origin v1.0.0
+```
+
 ## Full Disk Access
 
 Some locations (Mail, Safari caches, parts of `~/Library`) are protected by macOS privacy controls. Without Full Disk Access, affected categories show an orange lock icon and report what could not be read — nothing fails silently. Grant access in System Settings → Privacy & Security → Full Disk Access, or use the button in Disk Nuke's Settings → Permissions tab.
